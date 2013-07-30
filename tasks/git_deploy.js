@@ -8,6 +8,8 @@
 
 'use strict';
 
+var path = require("path");
+
 module.exports = function(grunt) {
   var file = grunt.file;
   var spawn = grunt.util.spawn;
@@ -41,6 +43,8 @@ module.exports = function(grunt) {
         }, cb);
       };
     }
+
+    grunt.file.delete(path.join(src, '.git'));
 
     var done = this.async();
 

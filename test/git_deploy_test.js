@@ -1,6 +1,7 @@
 'use strict';
 
 var grunt = require('grunt');
+var path = require('path');
 
 /*
   ======== A Handy Little Nodeunit Reference ========
@@ -24,24 +25,19 @@ var grunt = require('grunt');
 
 exports.git_deploy = {
   setUp: function(done) {
-    // setup here if necessary
-    done();
+    grunt.util.spawn({
+      cmd: 'git',
+      args: ['checkout', 'gh-pages'],
+      opts: {cwd: 'tmp/repo'}
+    }, done);
   },
   default_options: function(test) {
-    test.expect(1);
+    test.expect(3);
 
-    var actual = grunt.file.read('tmp/default_options');
-    var expected = grunt.file.read('test/expected/default_options');
-    test.equal(actual, expected, 'should describe what the default behavior is.');
-
-    test.done();
-  },
-  custom_options: function(test) {
-    test.expect(1);
-
-    var actual = grunt.file.read('tmp/custom_options');
-    var expected = grunt.file.read('test/expected/custom_options');
-    test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');
+    grunt.file.recurse('test/fixtures/second', function(abs, root, subdir, file) {
+      var relativePath = path.join(subdir || '', file);
+      test.ok(grunt.file.exists(path.join('tmp/repo', relativePath)), 'The file ‘' + relativePath + '’ should have been copied into the repository.');
+    });
 
     test.done();
   }
