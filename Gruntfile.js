@@ -49,15 +49,15 @@ module.exports = function(grunt) {
       first: {
         expand: true,
         cwd: 'test/fixtures/first',
-        src: '**/**',
+        src: ['node_modules/.gitkeep','**/**'],
         dest: 'tmp/src/'
       },
       second: {
         expand: true,
         cwd: 'test/fixtures/second',
-        src: '**/**',
+        src: ['.gitignore','**/**'],
         dest: 'tmp/src/'
-      },
+      }
     },
 
     // Configuration to be run (and then tested).

@@ -32,11 +32,13 @@ exports.git_deploy = {
     }, done);
   },
   default_options: function(test) {
-    test.expect(3);
+    test.expect(4);
 
     grunt.file.recurse('test/fixtures/second', function(abs, root, subdir, file) {
       var relativePath = path.join(subdir || '', file);
-      test.ok(grunt.file.exists(path.join('tmp/repo', relativePath)), 'The file ‘' + relativePath + '’ should have been copied into the repository.');
+      if (!/(Gruntfile\.js|README\.md|\.gitignore)/.test(relativePath)) {
+        test.ok(grunt.file.exists(path.join('tmp/repo', relativePath)), 'The file ‘' + relativePath + '’ should have been copied into the repository.');
+      }
     });
 
     test.done();
