@@ -17,8 +17,10 @@ module.exports = function(grunt) {
   grunt.registerMultiTask('git_deploy', 'Push files to a git remote.', function() {
     // Merge task options with these defaults.
     var options = this.options({
-      message: 'autocommit',
-      branch: 'gh-pages'
+      message: 'git deploy',
+      branch: 'gh-pages',
+      ignore: ['.gitignore','Gruntfile.js','node_modules','nbproject','README.md','test','**/*.scss','**/*.sass','.sass-cache','.idea','.DS_Store','config.rb'],
+      ignoreAppend: false
     });
 
     if (!options.url) {
@@ -44,12 +46,41 @@ module.exports = function(grunt) {
       };
     }
 
-    grunt.file.delete(path.join(src, '.git'));
+    function buildIgnore() {
+      return function(cb) {
+        grunt.log.writeln('Creating ' + '.gitignore'.cyan);
+
+        var
+          gitignore = path.join(src, '.gitignore'),
+          append = '';
+
+        if (options.ignoreAppend) {
+          if (file.isFile(gitignore)) {
+            append = file.read(gitignore);
+            append += append.charAt(append.length-1) !== '\n' ? '\n' : '';
+          }
+        }
+
+        file.write(
+          gitignore,
+          append + (file.expand({
+            cwd: src
+          }, options.ignore).join('\n'))
+        );
+
+        cb(null, '', 0);
+      };
+    }
+
+    if (file.isDir(path.join(src, '.git'))) {
+      grunt.file.delete(path.join(src, '.git'));
+    }
 
     var done = this.async();
 
     grunt.util.async.series([
       git(['init']),
+      buildIgnore(),
       git(['checkout', '--orphan', options.branch]),
       git(['add', '--all']),
       git(['commit', '--message="' + options.message + '"']),
