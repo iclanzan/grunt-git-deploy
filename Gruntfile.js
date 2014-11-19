@@ -67,6 +67,14 @@ module.exports = function(grunt) {
           url: '../repo'
         },
         src: 'tmp/src'
+      },
+      with_username_and_email: {
+        options: {
+          url: '../repo',
+          userEmail: 'john.smith@zombo.com',
+          userName: 'anonymous'
+        },
+        src: 'tmp/src'
       }
     },
 
