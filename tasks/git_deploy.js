@@ -18,7 +18,9 @@ module.exports = function(grunt) {
     // Merge task options with these defaults.
     var options = this.options({
       message: 'autocommit',
-      branch: 'gh-pages'
+      branch: 'gh-pages',
+      userEmail: null,
+      userName: null
     });
 
     if (!options.url) {
@@ -46,16 +48,27 @@ module.exports = function(grunt) {
 
     grunt.file.delete(path.join(src, '.git'));
 
-    var done = this.async();
+    var done = this.async(), steps = [];
 
-    grunt.util.async.series([
-      git(['init']),
-      git(['checkout', '--orphan', options.branch]),
-      git(['add', '--all']),
-      git(['commit', '--message="' + options.message + '"']),
-      git(['push', '--prune', '--force', '--quiet', options.url, options.branch])
-    ], done);
+    /* jash, the javascript bash */
+    steps.push(git(['init']));
+    steps.push(git(['checkout', '--orphan', options.branch]));
+    steps.push(git(['add', '--all']));
 
+    if (options.userEmail) {
+      steps.push(git(['config', 'user.email', options.userEmail]));
+    }
+
+    if (options.userName) {
+      steps.push(git(['config', 'user.name', options.userName]));
+    }    
+    
+    steps.push(git(['commit', '--message="' + options.message + '"']));
+    steps.push(git(['push', '--prune', '--force', '--quiet', options.url, options.branch]));
+
+    grunt.util.async.series(steps, done);
+
+    return true;
   });
 };
 
