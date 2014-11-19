@@ -56,5 +56,21 @@ Default value: `'autocommit'`
 
 Commit message.
 
+#### options.userName
+Type: `String`
+Default value: `'null'`
+
+The username to use for the commit. This option is not required, but
+if you haven't configured a global userName then the task will fail.
+
+
+#### options.userEmail
+Type: `String`
+Default value: `'null'`
+
+The email address to use for the commit. This option is not required,
+but if you haven't configured a global userName then the task will
+fail.
+
 ## Contributing
 If you can think of a way to unit test this plugin please take a shot at it.
