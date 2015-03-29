@@ -56,5 +56,11 @@ Default value: `'autocommit'`
 
 Commit message.
 
+#### options.quiet
+Type: `Boolean`
+Default value: `true`
+
+Suppress git console output, including output from remote server when pushing.
+
 ## Contributing
 If you can think of a way to unit test this plugin please take a shot at it.

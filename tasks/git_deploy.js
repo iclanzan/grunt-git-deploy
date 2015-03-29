@@ -18,7 +18,8 @@ module.exports = function(grunt) {
     // Merge task options with these defaults.
     var options = this.options({
       message: 'autocommit',
-      branch: 'gh-pages'
+      branch: 'gh-pages',
+      quiet: true
     });
 
     if (!options.url) {
@@ -36,11 +37,22 @@ module.exports = function(grunt) {
     function git(args) {
       return function(cb) {
         grunt.log.writeln('Running ' + args.join(' ').green);
-        spawn({
+        git = spawn({
           cmd: 'git',
           args: args,
           opts: {cwd: src}
         }, cb);
+        
+        if (!options.quiet) {
+          // Log git output to console
+          git.stdout.on('data', function (data) {
+            process.stdout.write(data);
+          });
+          
+          git.stderr.on('data', function (data) {
+            process.stderr.write(data);
+          });
+        }
       };
     }
 
@@ -48,12 +60,17 @@ module.exports = function(grunt) {
 
     var done = this.async();
 
+    var push_args = ['push', '--prune', '--force'];
+    if (options.quiet)
+      push_args.push('--quiet');
+    push_args.push(options.url, options.branch);
+    
     grunt.util.async.series([
       git(['init']),
       git(['checkout', '--orphan', options.branch]),
       git(['add', '--all']),
       git(['commit', '--message="' + options.message + '"']),
-      git(['push', '--prune', '--force', '--quiet', options.url, options.branch])
+      git(push_args)
     ], done);
 
   });
