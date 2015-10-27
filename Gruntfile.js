@@ -36,7 +36,8 @@ module.exports = function(grunt) {
 
     // Before generating any new files, remove any previously-created files.
     clean: {
-      tests: ['tmp']
+      tests: ['tmp'],
+      deploy: ['tmp/grunt-git-deploy']
     },
 
     init_repo: {
@@ -87,7 +88,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'init_repo', 'copy:first', 'git_deploy', 'copy:second', 'git_deploy', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'init_repo', 'copy:first', 'git_deploy', 'clean:deploy', 'copy:second', 'git_deploy', 'nodeunit']);
 
   // By default, run all tests.
   grunt.registerTask('default', ['test']);
