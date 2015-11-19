@@ -48,28 +48,28 @@ module.exports = function(grunt) {
       };
     }
 
-    function copyDirectory( src_dir, dest_dir ){
+    function copyDirectory( srcDir, destDir ){
 
           return function(cb) {
-              grunt.log.writeln('Copying ' + src_dir + ' to ' + dest_dir );
+              grunt.log.writeln('Copying ' + srcDir + ' to ' + destDir );
               //Ensure directory has trailingslash
-              if ( src_dir.substr(-1) != '/' ) {
-                  src_dir = src_dir + '/';
+              if ( srcDir.substr(-1) != '/' ) {
+                  srcDir = srcDir + '/';
               }
-              grunt.file.expand(  { 'expand': true, 'cwd' : src_dir }, '**/*' ).forEach( function( src ){
+              grunt.file.expand(  { 'expand': true, 'cwd' : srcDir }, '**/*' ).forEach( function( src ){
 
                   var dest;
 
                   if (process.platform === 'win32') {
-                      dest = path.join( dest_dir, src).replace(/\\/g, '/');
+                      dest = path.join(destDir, src).replace(/\\/g, '/');
                   } else {
-                      dest = path.join( dest_dir, src);
+                      dest = path.join(destDir, src);
                   }
 
-                  if ( grunt.file.isDir( src_dir + src ) ) {
-                      grunt.file.mkdir( dest);
+                  if ( grunt.file.isDir(srcDir + src) ) {
+                      grunt.file.mkdir(dest);
                   } else {
-                      grunt.file.copy( src_dir + src, dest );
+                      grunt.file.copy(srcDir + src, dest);
                   }
               });
 
