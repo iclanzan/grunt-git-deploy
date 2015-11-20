@@ -22,13 +22,37 @@ module.exports = function(grunt) {
       return false;
     }
 
+    function git(args) {
+      return function(cb) {
+        grunt.log.writeln('Running ' + args.join(' ').green + ' in ' + dest );
+        grunt.util.spawn({
+          cmd: 'git',
+          args: args,
+          opts: {cwd: dest}
+        }, cb);
+      };
+    }
+
+    function touch(args) {
+      return function(cb) {
+        grunt.util.spawn({
+          cmd: 'touch',
+          args: args,
+          opts: {cwd: dest}
+        }, cb);
+      };
+    }
     var done = this.async();
 
-    grunt.util.spawn({
-      cmd: 'git',
-      args: ['init'],
-      opts: {cwd: dest}
-    }, done);
+    grunt.util.async.series([
+      git(['init']),
+      git(['checkout', '-b', 'gh-pages']),
+      touch(['readme.md']),
+      git(['add', '--all']),
+      git(['commit', '--message=Initial commit']),
+      git(['checkout', '-b', 'master'])
+    ], done);
+
   });
 
   // Project configuration.

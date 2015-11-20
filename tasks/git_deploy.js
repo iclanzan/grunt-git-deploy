@@ -84,12 +84,12 @@ module.exports = function(grunt) {
     var done = this.async();
 
     grunt.util.async.series([
-      git(['clone', options.url, '.' ]),
+      git(['clone', '-b', options.branch, options.url, '.' ]),
       git(['checkout', '-B', options.branch]),
       copyDirectory( src, deployDir ),
       git(['add', '--all']),
-      git(['commit', '--message="' + options.message + '"']),
-      git(['push', '--prune', '--force', '--quiet', options.url, options.branch])
+      git(['commit', '--message=' + options.message]),
+      git(['push', '--prune', '--quiet', options.url, options.branch])
     ], done);
 
   });
