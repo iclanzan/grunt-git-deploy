@@ -32,7 +32,7 @@ exports.git_deploy = {
     }, done);
   },
   default_options: function(test) {
-    test.expect(5);
+    test.expect(6);
 
     grunt.file.recurse('test/fixtures/second', function(abs, root, subdir, file) {
       var relativePath = path.join(subdir || '', file);

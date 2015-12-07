@@ -57,7 +57,7 @@ module.exports = function(grunt) {
                   srcDir = srcDir + '/';
               }
 
-              grunt.file.expand(  { 'expand': true, 'cwd' : destDir }, ['**/*', '!.git/**'] ).forEach( function( dest ){
+              grunt.file.expand(  { 'expand': true, 'cwd' : destDir, dot: true }, ['**/*', '!.git/**'] ).forEach( function( dest ){
 
                 if (process.platform === 'win32') {
                   dest = path.join(destDir, dest).replace(/\\/g, '/');
@@ -68,7 +68,7 @@ module.exports = function(grunt) {
                 grunt.file.delete(dest);
               });
 
-              grunt.file.expand(  { 'expand': true, 'cwd' : srcDir }, ['**/*', '!.git/**'] ).forEach( function( src ){
+              grunt.file.expand(  { 'expand': true, 'cwd' : srcDir, dot: true }, ['**/*', '!.git/**'] ).forEach( function( src ){
 
                   var dest;
 

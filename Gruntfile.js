@@ -76,14 +76,16 @@ module.exports = function(grunt) {
         expand: true,
         cwd: 'test/fixtures/first',
         src: '**/**',
-        dest: 'tmp/src/'
+        dest: 'tmp/src/',
+        dot: true
       },
       second: {
         expand: true,
         cwd: 'test/fixtures/second',
         src: '**/**',
-        dest: 'tmp/src/'
-      },
+        dest: 'tmp/src/',
+        dot: true
+      }
     },
 
     // Configuration to be run (and then tested).
