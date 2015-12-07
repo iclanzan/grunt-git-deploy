@@ -48,7 +48,7 @@ module.exports = function(grunt) {
       };
     }
 
-    function copyDirectory( srcDir, destDir ){
+    function copyIntoRepo( srcDir, destDir ){
 
           return function(cb) {
               grunt.log.writeln('Copying ' + srcDir + ' to ' + destDir );
@@ -56,7 +56,19 @@ module.exports = function(grunt) {
               if ( srcDir.substr(-1) != '/' ) {
                   srcDir = srcDir + '/';
               }
-              grunt.file.expand(  { 'expand': true, 'cwd' : srcDir }, '**/*' ).forEach( function( src ){
+
+              grunt.file.expand(  { 'expand': true, 'cwd' : destDir }, ['**/*', '!.git/**'] ).forEach( function( dest ){
+
+                if (process.platform === 'win32') {
+                  dest = path.join(destDir, dest).replace(/\\/g, '/');
+                } else {
+                  dest = path.join(destDir, dest);
+                }
+
+                grunt.file.delete(dest);
+              });
+
+              grunt.file.expand(  { 'expand': true, 'cwd' : srcDir }, ['**/*', '!.git/**'] ).forEach( function( src ){
 
                   var dest;
 
@@ -86,7 +98,7 @@ module.exports = function(grunt) {
     grunt.util.async.series([
       git(['clone', '-b', options.branch, options.url, '.' ]),
       git(['checkout', '-B', options.branch]),
-      copyDirectory( src, deployDir ),
+      copyIntoRepo( src, deployDir ),
       git(['add', '--all']),
       git(['commit', '--message=' + options.message]),
       git(['push', '--prune', '--quiet', options.url, options.branch])
