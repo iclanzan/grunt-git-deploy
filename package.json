@@ -29,10 +29,11 @@
     "test": "grunt test"
   },
   "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-cli": "0.1.13",
     "grunt-contrib-clean": "~0.4.0",
     "grunt-contrib-copy": "~0.4.1",
-    "grunt-contrib-nodeunit": "^0.4.1",
-    "grunt": "~0.4.1"
+    "grunt-contrib-nodeunit": "^0.4.1"
   },
   "peerDependencies": {
     "grunt": "~0.4.1"
