@@ -22,13 +22,37 @@ module.exports = function(grunt) {
       return false;
     }
 
+    function git(args) {
+      return function(cb) {
+        grunt.log.writeln('Running ' + args.join(' ').green + ' in ' + dest );
+        grunt.util.spawn({
+          cmd: 'git',
+          args: args,
+          opts: {cwd: dest}
+        }, cb);
+      };
+    }
+
+    function touch(args) {
+      return function(cb) {
+        grunt.util.spawn({
+          cmd: 'touch',
+          args: args,
+          opts: {cwd: dest}
+        }, cb);
+      };
+    }
     var done = this.async();
 
-    grunt.util.spawn({
-      cmd: 'git',
-      args: ['init'],
-      opts: {cwd: dest}
-    }, done);
+    grunt.util.async.series([
+      git(['init']),
+      git(['checkout', '-b', 'gh-pages']),
+      touch(['readme.md']),
+      git(['add', '--all']),
+      git(['commit', '--message=Initial commit']),
+      git(['checkout', '-b', 'master'])
+    ], done);
+
   });
 
   // Project configuration.
@@ -36,7 +60,9 @@ module.exports = function(grunt) {
 
     // Before generating any new files, remove any previously-created files.
     clean: {
-      tests: ['tmp']
+      tests: ['tmp'],
+      test_build: ['tmp/src'],
+      deploy: ['tmp/grunt-git-deploy']
     },
 
     init_repo: {
@@ -50,21 +76,31 @@ module.exports = function(grunt) {
         expand: true,
         cwd: 'test/fixtures/first',
         src: '**/**',
-        dest: 'tmp/src/'
+        dest: 'tmp/src/',
+        dot: true
       },
       second: {
         expand: true,
         cwd: 'test/fixtures/second',
         src: '**/**',
-        dest: 'tmp/src/'
-      },
+        dest: 'tmp/src/',
+        dot: true
+      }
     },
 
     // Configuration to be run (and then tested).
     git_deploy: {
-      default_options: {
+      first: {
         options: {
-          url: '../repo'
+          url: '../repo',
+          message: 'first deploy'
+        },
+        src: 'tmp/src'
+      },
+      second: {
+        options: {
+          url: '../repo',
+          message: 'second deploy'
         },
         src: 'tmp/src'
       }
@@ -87,7 +123,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'init_repo', 'copy:first', 'git_deploy', 'copy:second', 'git_deploy', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'init_repo', 'copy:first', 'git_deploy:first', 'clean:deploy', 'clean:test_build', 'copy:second', 'git_deploy:second', 'nodeunit']);
 
   // By default, run all tests.
   grunt.registerTask('default', ['test']);
