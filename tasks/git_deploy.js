@@ -18,6 +18,8 @@ module.exports = function(grunt) {
     // Merge task options with these defaults.
     var options = this.options({
       message: 'autocommit',
+      tag: false,
+      tagMessage: 'autocommit',
       branch: 'gh-pages'
     });
 
@@ -95,14 +97,21 @@ module.exports = function(grunt) {
 
     var done = this.async();
 
-    grunt.util.async.series([
+    var commands = [
       git(['clone', '-b', options.branch, options.url, '.' ]),
       git(['checkout', '-B', options.branch]),
       copyIntoRepo( src, deployDir ),
       git(['add', '--all']),
-      git(['commit', '--message=' + options.message]),
-      git(['push', '--prune', '--quiet', options.url, options.branch])
-    ], done);
+      git(['commit', '--message=' + options.message ])
+    ];
+
+    if ( options.tag ) {
+      commands.push( git(['tag', '-a', options.tag, '-m', options.tagMessage]) );
+    }
+
+    commands.push( git(['push', '--prune', '--force', '--quiet', '--follow-tags', options.url, options.branch]) );
+
+    grunt.util.async.series(commands, done);
 
   });
 };

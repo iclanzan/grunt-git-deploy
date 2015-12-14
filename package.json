@@ -1,7 +1,7 @@
 {
   "name": "grunt-git-deploy",
   "description": "Deploy files to any branch of any remote git repository.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "homepage": "https://github.com/iclanzan/grunt-git-deploy",
   "author": {
     "name": "Sorin Iclanzan",
