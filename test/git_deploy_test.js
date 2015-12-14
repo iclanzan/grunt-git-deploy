@@ -32,7 +32,7 @@ exports.git_deploy = {
     }, done);
   },
   default_options: function(test) {
-    test.expect(7);
+    test.expect(6);
 
     grunt.file.recurse('test/fixtures/second', function(abs, root, subdir, file) {
       var relativePath = path.join(subdir || '', file);
@@ -40,16 +40,19 @@ exports.git_deploy = {
     });
 
     test.ok(!grunt.file.exists(path.join('tmp/repo', 'to-be-removed')), 'The file ‘to-be-removed’ should have been removed from the repository.');
+    test.done();
+  },
 
+  commit_message: function(test) {
+    test.expect(1);
     grunt.util.spawn({
       cmd: 'git',
       args: ['log', '--format=%s'],
       opts: {cwd: 'tmp/repo'}
-    }, function( a, b, c ){
+    }, function(error, result, code){
       //Get repo history
       var expected = "second deploy\nfirst deploy\nInitial commit";
-      test.equal( b.stdout, expected, 'The deployment repository`s history is not as expected' )
-
+      test.equal( result.stdout, expected, 'The deployment repository`s history is not as expected' )
       test.done();
     } );
 
