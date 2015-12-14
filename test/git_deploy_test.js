@@ -56,5 +56,19 @@ exports.git_deploy = {
       test.done();
     } );
 
-  }
+  },
+
+  tags: function(test) {
+    test.expect(1);
+    grunt.util.spawn({
+      cmd: 'git',
+      args: ['tag'],
+      opts: {cwd: 'tmp/repo'}
+    },function( error, result, code ){
+      //Get repo history
+      var expected = "v1\nv2";
+      test.equal( result.stdout, expected, 'The deployment repository`s tags are not as expected' )
+      test.done();
+    });
+  },
 };

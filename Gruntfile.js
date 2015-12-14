@@ -93,6 +93,7 @@ module.exports = function(grunt) {
       first: {
         options: {
           url: '../repo',
+          tag: 'v1',
           message: 'first deploy'
         },
         src: 'tmp/src'
@@ -100,6 +101,7 @@ module.exports = function(grunt) {
       second: {
         options: {
           url: '../repo',
+          tag: 'v2',
           message: 'second deploy'
         },
         src: 'tmp/src'
