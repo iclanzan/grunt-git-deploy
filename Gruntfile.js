@@ -105,6 +105,14 @@ module.exports = function(grunt) {
           message: 'second deploy'
         },
         src: 'tmp/src'
+      },
+      null_deploy: {
+        options: {
+          url: '../repo',
+          tag: 'null',
+          message: 'null deploy, should not work'
+        },
+        src: 'tmp/src'
       }
     },
 
@@ -125,7 +133,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'init_repo', 'copy:first', 'git_deploy:first', 'clean:deploy', 'clean:test_build', 'copy:second', 'git_deploy:second', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'init_repo', 'copy:first', 'git_deploy:first', 'clean:deploy', 'clean:test_build', 'copy:second', 'git_deploy:second', 'clean:deploy', 'clean:test_build', 'copy:second', 'git_deploy:null_deploy', 'nodeunit']);
 
   // By default, run all tests.
   grunt.registerTask('default', ['test']);

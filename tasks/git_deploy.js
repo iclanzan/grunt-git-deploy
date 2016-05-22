@@ -97,21 +97,45 @@ module.exports = function(grunt) {
 
     var done = this.async();
 
+    // stage files for checkin
+
     var commands = [
       git(['clone', '-b', options.branch, options.url, '.' ]),
       git(['checkout', '-B', options.branch]),
-      copyIntoRepo( src, deployDir ),
-      git(['add', '--all']),
-      git(['commit', '--message=' + options.message ])
+      copyIntoRepo( src, deployDir )
     ];
 
-    if ( options.tag ) {
-      commands.push( git(['tag', '-a', options.tag, '-m', options.tagMessage]) );
-    }
+    grunt.util.async.series(commands, function() {
+      spawn({ // determine if any files need to be checked in
+        cmd: 'git',
+        args: ['status'],
+        opts: {cwd: deployDir}
+      }, function(error, result, code) {
+        if(code == 0) {
+          if(result.stdout.indexOf('nothing to commit, working directory clean') < 0) { // files need to be checked in
+            commands = [
+               git(['add', '--all']),
+               git(['commit', '--message=' + options.message ])
+            ];
+  
+            if ( options.tag ) {
+              commands.push( git(['tag', '-a', options.tag, '-m', options.tagMessage]) );
+            }
+  
+            commands.push( git(['push', '--prune', '--force', '--quiet', '--follow-tags', options.url, options.branch]) );
+  
+            grunt.util.async.series(commands, done);
+          } else { // files do not need to be checked in
+            grunt.log.writeln('Nothing for git_deploy to commit.');
+            done();
+          }
+        } else {
+          grunt.fail.warn('Error running "git status":' + result.stderr);
+          done();
+        }
+      });
+    });
 
-    commands.push( git(['push', '--prune', '--force', '--quiet', '--follow-tags', options.url, options.branch]) );
-
-    grunt.util.async.series(commands, done);
 
   });
 };
